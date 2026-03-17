@@ -177,16 +177,28 @@ export default function CreateTaskModal({ users, isManager, currentUserEmail, on
             </div>
           </div>
 
-          {/* Notes */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Ghi chú</label>
-            <input
-              type="text"
-              value={form.notes}
-              onChange={e => setForm({ ...form, notes: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm"
-              placeholder="Ghi chú thêm..."
-            />
+          {/* Notes & Link */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Link sản phẩm đính kèm</label>
+              <input
+                type="url"
+                value={form.attachmentLink}
+                onChange={e => setForm({ ...form, attachmentLink: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm"
+                placeholder="https://..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Ghi chú</label>
+              <input
+                type="text"
+                value={form.notes}
+                onChange={e => setForm({ ...form, notes: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm"
+                placeholder="Ghi chú thêm..."
+              />
+            </div>
           </div>
 
           {/* Actions */}

@@ -107,9 +107,13 @@ export default function TaskDetailModal({ task, users, isManager, onUpdate, onDe
                   <input type="date" value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none text-sm" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Ghi chú</label>
-                  <input type="text" value={form.notes || ''} onChange={e => setForm({ ...form, notes: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none text-sm" />
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Link sản phẩm đính kèm</label>
+                  <input type="url" value={form.attachmentLink || ''} onChange={e => setForm({ ...form, attachmentLink: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none text-sm" placeholder="https://..." />
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5 mt-4">Ghi chú</label>
+                <input type="text" value={form.notes || ''} onChange={e => setForm({ ...form, notes: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none text-sm" />
               </div>
             </>
           ) : (
@@ -135,6 +139,14 @@ export default function TaskDetailModal({ task, users, isManager, onUpdate, onDe
                   <span className="text-sm font-bold text-gray-600">{task.progress}%</span>
                 </div>
               </div>
+              {task.attachmentLink && (
+                <div>
+                  <p className="text-sm font-semibold text-gray-500 mb-1">Link sản phẩm đính kèm</p>
+                  <a href={task.attachmentLink} target="_blank" rel="noopener noreferrer" className="text-sm text-indigo-600 hover:text-indigo-800 underline break-all">
+                    {task.attachmentLink}
+                  </a>
+                </div>
+              )}
               {task.notes && (
                 <div><p className="text-sm font-semibold text-gray-500 mb-1">Ghi chú</p><p className="text-sm text-gray-700">{task.notes}</p></div>
               )}
