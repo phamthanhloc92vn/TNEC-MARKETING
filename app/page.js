@@ -19,6 +19,7 @@ export default function LoginPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('error') === 'AccessDenied') {
+      // eslint-disable-next-line
       setError('Email của bạn không có trong hệ thống. Liên hệ Trưởng phòng để được cấp quyền.');
     }
   }, []);

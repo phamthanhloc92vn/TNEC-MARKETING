@@ -9,20 +9,7 @@ const PRIORITY_STYLES = {
   'Thấp': 'border-l-green-500 bg-green-50/30',
 };
 
-export default function TaskCard({ task, onClick, isDragging }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: task.taskId });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
+export function TaskCardContent({ task, isDragging }) {
   const priorityStyle = PRIORITY_STYLES[task.priority] || '';
   const isOverdue = task.deadline && new Date(task.deadline) < new Date() && task.status !== 'Hoàn thành';
   const progress = parseInt(task.progress) || 0;
@@ -30,7 +17,20 @@ export default function TaskCard({ task, onClick, isDragging }) {
   const formatDate = (dateStr) => {
     if (!dateStr) return '';
     try {
+      if (typeof dateStr === 'string' && dateStr.includes('/')) {
+        const parts = dateStr.split(' ')[0].split('/');
+        if (parts.length === 3) {
+          if (parseInt(parts[0]) > 12 || parts[0].length === 2) {
+             const d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+             if (!isNaN(d.getTime())) {
+                return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+             }
+          }
+        }
+      }
+      
       const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
       return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
     } catch {
       return dateStr;
@@ -38,14 +38,7 @@ export default function TaskCard({ task, onClick, isDragging }) {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      onClick={onClick}
-      className={`bg-white rounded-xl p-4 border-l-4 border border-gray-100 cursor-grab active:cursor-grabbing hover:shadow-md transition-all duration-150 ${priorityStyle} ${isDragging ? 'opacity-50 rotate-2' : ''}`}
-    >
+    <div className={`bg-white rounded-xl p-4 border-l-4 border border-gray-100 hover:shadow-md transition-all duration-150 ${priorityStyle} ${isDragging ? 'opacity-50 rotate-2' : ''}`}>
       {/* Task name */}
       <h4 className="font-semibold text-sm text-gray-900 mb-2 line-clamp-2">{task.name}</h4>
 
@@ -82,6 +75,34 @@ export default function TaskCard({ task, onClick, isDragging }) {
         </div>
         <span className="text-[10px] font-semibold text-gray-400">{progress}%</span>
       </div>
+    </div>
+  );
+}
+
+export default function TaskCard({ task, onClick, isDragging }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: task.taskId });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={onClick}
+      className={`touch-none cursor-grab active:cursor-grabbing ${isDragging ? 'z-50 relative' : ''}`}
+    >
+      <TaskCardContent task={task} isDragging={isDragging} />
     </div>
   );
 }

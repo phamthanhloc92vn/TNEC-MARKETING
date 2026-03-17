@@ -51,6 +51,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (status === 'authenticated') {
+      // eslint-disable-next-line
       Promise.all([fetchTasks(), fetchUsers()]).then(() => setLoading(false));
     }
   }, [status, fetchTasks, fetchUsers]);

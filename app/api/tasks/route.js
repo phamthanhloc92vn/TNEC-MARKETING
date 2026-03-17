@@ -23,11 +23,16 @@ export async function POST(request) {
 
   switch (action) {
     case 'create': {
-      const result = await createTask({
-        ...data,
-        assignedBy: session.user.email,
-      });
-      return NextResponse.json(result);
+      try {
+        const result = await createTask({
+          ...data,
+          assignedBy: session.user.email,
+        });
+        return NextResponse.json(result);
+      } catch (e) {
+        console.error('Create task error:', e);
+        return NextResponse.json({ success: false, error: e.message || 'Error executing createTask' }, { status: 500 });
+      }
     }
     case 'update': {
       const result = await updateTask(data);
