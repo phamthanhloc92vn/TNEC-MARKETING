@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# build
+.next/
+out/
+build/
+
+# env
+.env
+.env.local
+.env.production.local
+.env.development.local
+
+# debug
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Agent
+.agent/
+stitch-skills-main/
