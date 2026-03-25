@@ -41,7 +41,14 @@ export default function DashboardPage() {
   }, []);
 
   const fetchUsers = useCallback(async () => {
-    if (!isManager) return;
+    if (!isManager) {
+      setUsers([{
+        email: session?.user?.email,
+        name: session?.user?.sheetName || session?.user?.name,
+        role: session?.user?.role
+      }]);
+      return;
+    }
     try {
       const res = await fetch('/api/users');
       const data = await res.json();
@@ -49,7 +56,7 @@ export default function DashboardPage() {
     } catch (e) {
       console.error('Error fetching users:', e);
     }
-  }, [isManager]);
+  }, [isManager, session]);
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -211,8 +218,8 @@ export default function DashboardPage() {
         {/* Stats */}
         <StatsBar tasks={tasks} />
 
-        {/* Employee Stats (Manager only) */}
-        {isManager && <EmployeeStats tasks={tasks} users={users} />}
+        {/* Employee Stats (Shows all for Manager, self for normal Employee) */}
+        <EmployeeStats tasks={tasks} users={users} isManager={isManager} />
 
         {/* Kanban Board */}
         <KanbanBoard

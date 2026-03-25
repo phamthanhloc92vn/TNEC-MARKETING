@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { exportEmployeeTasksToExcel } from '../lib/exportExcel';
 
-export default function EmployeeStats({ tasks, users }) {
+export default function EmployeeStats({ tasks, users, isManager }) {
   const [expanded, setExpanded] = useState(true);
 
-  const employees = users.filter(u => u.role.toLowerCase() !== 'trưởng phòng');
+  const employees = users.filter(u => u.role?.toLowerCase() !== 'trưởng phòng');
 
   const getEmployeeStats = (email) => {
     const empTasks = tasks.filter(t => t.assignee?.toLowerCase() === email.toLowerCase());
@@ -41,7 +41,7 @@ export default function EmployeeStats({ tasks, users }) {
       >
         <div className="flex items-center gap-3">
           <span className="text-lg">👥</span>
-          <span className="font-semibold text-gray-900">Thống kê theo nhân viên</span>
+          <span className="font-semibold text-gray-900">{isManager ? 'Thống kê theo nhân viên' : 'Thống kê cá nhân / Báo cáo'}</span>
         </div>
         <span className="text-sm text-indigo-500 font-medium">
           {expanded ? 'Thu gọn ▲' : 'Mở rộng ▼'}
