@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { exportEmployeeTasksToExcel } from '../lib/exportExcel';
 
 export default function EmployeeStats({ tasks, users }) {
   const [expanded, setExpanded] = useState(true);
@@ -63,7 +64,30 @@ export default function EmployeeStats({ tasks, users }) {
                     <p className="font-semibold text-gray-900 text-sm">{emp.name}</p>
                     <p className="text-xs text-gray-500 uppercase tracking-wider">{emp.role}</p>
                   </div>
-                  <span className="ml-auto text-2xl font-bold text-gray-300">{stats.total}</span>
+                  <div className="ml-auto flex items-center gap-3">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const empTasks = tasks.filter(t => t.assignee?.toLowerCase() === emp.email.toLowerCase());
+                        if (empTasks.length > 0) {
+                          exportEmployeeTasksToExcel(emp.name, emp.role, empTasks, users);
+                        } else {
+                          alert('Nhân viên này chưa có công việc nào để xuất!');
+                        }
+                      }}
+                      className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors group relative"
+                      title="Xuất báo cáo Excel"
+                    >
+                      <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      {/* Tooltip */}
+                      <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                        Xuất Excel
+                      </span>
+                    </button>
+                    <span className="text-2xl font-bold text-gray-300">{stats.total}</span>
+                  </div>
                 </div>
 
                 {/* Status badges */}

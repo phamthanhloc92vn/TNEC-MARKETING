@@ -12,10 +12,10 @@ export const authOptions = {
   callbacks: {
     async signIn({ user }) {
       try {
-        // Check if user email exists in Google Sheet Users tab
-        const sheetUser = await getUserByEmail(user.email);
-        if (!sheetUser) {
-          console.log(`[NextAuth] Access Denied: Email ${user.email} not found in Google Sheets`);
+        // Check if user email exists in database
+        const dbUser = await getUserByEmail(user.email);
+        if (!dbUser) {
+          console.log(`[NextAuth] Access Denied: Email ${user.email} not found in database`);
           return false; // Deny login
         }
         return true;
@@ -25,14 +25,14 @@ export const authOptions = {
       }
     },
     async session({ session }) {
-      // Attach role and user info from Sheet
+      // Attach role and user info from db
       if (session?.user?.email) {
-        const sheetUser = await getUserByEmail(session.user.email);
-        if (sheetUser) {
-          session.user.role = sheetUser.role;
-          session.user.sheetName = sheetUser.name;
-          session.user.userId = sheetUser.id;
-          session.user.status = sheetUser.status;
+        const dbUser = await getUserByEmail(session.user.email);
+        if (dbUser) {
+          session.user.role = dbUser.role;
+          session.user.sheetName = dbUser.name;
+          session.user.userId = dbUser.id;
+          session.user.status = dbUser.status;
         }
       }
       return session;
