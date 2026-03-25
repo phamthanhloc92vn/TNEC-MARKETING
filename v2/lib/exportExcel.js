@@ -74,6 +74,7 @@ export const exportEmployeeTasksToExcel = async (employeeName, employeeRole, tas
   // Helper chuyển đổi email sang role
   const getRoleByEmail = (email) => {
     if (!email) return '';
+    if (email.toLowerCase() === 'tnechcm@gmail.com') return 'Trungnam E&C';
     const user = users.find(u => u.email?.toLowerCase() === email.toLowerCase());
     // Nếu email hiện tại là người được lấy báo cáo (employeeName tương ứng thì có thể lấy role luôn, nhưng dùng mảng users sẽ bao quát cả người giao)
     return user ? user.role : email;
