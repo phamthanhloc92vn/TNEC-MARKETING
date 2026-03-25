@@ -82,17 +82,22 @@ export default function UserManagementModal({ users, onUpdate, onClose }) {
             </div>
             <div className="md:col-span-1">
               <label className="block text-[10px] font-bold text-indigo-600 uppercase mb-1 ml-1">Chức vụ</label>
-              <select
+              <input
+                list="role-suggestions"
                 className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-white"
                 value={newUser.role}
                 onChange={e => setNewUser({ ...newUser, role: e.target.value })}
-              >
-                <option>Designer</option>
-                <option>Media</option>
-                <option>Digital</option>
-                <option>Video Code</option>
-                <option>Trưởng phòng</option>
-              </select>
+                placeholder="Nhập hoặc chọn chức vụ"
+                required
+              />
+              <datalist id="role-suggestions">
+                <option value="Designer" />
+                <option value="Media" />
+                <option value="Digital" />
+                <option value="Content" />
+                <option value="Trưởng phòng" />
+                <option value="Video Code" />
+              </datalist>
             </div>
             <div className="flex items-end">
               <button
