@@ -4,6 +4,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useCallback } from 'react';
 import KanbanBoard from '@/components/KanbanBoard';
+import WeeklyPlanBoard from '@/components/WeeklyPlanBoard';
 import StatsBar from '@/components/StatsBar';
 import EmployeeStats from '@/components/EmployeeStats';
 import CreateTaskModal from '@/components/CreateTaskModal';
@@ -23,6 +24,7 @@ export default function DashboardPage() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [toast, setToast] = useState(null);
+  const [viewMode, setViewMode] = useState('kanban'); // 'kanban' or 'weekly'
 
   const isManager = session?.user?.role?.toLowerCase().trim() === 'trưởng phòng';
 
@@ -221,13 +223,37 @@ export default function DashboardPage() {
         {/* Employee Stats (Shows all for Manager, self for normal Employee) */}
         <EmployeeStats tasks={tasks} users={users} isManager={isManager} />
 
-        {/* Kanban Board */}
-        <KanbanBoard
-          tasks={tasks}
-          statuses={STATUSES}
-          onStatusChange={handleStatusChange}
-          onTaskClick={setSelectedTask}
-        />
+        {/* View Toggle & Board */}
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-bold text-gray-800">
+            {viewMode === 'kanban' ? 'Bảng Kanban' : 'Kế hoạch tuần'}
+          </h2>
+          <div className="flex bg-gray-100 p-1 rounded-xl">
+            <button
+              onClick={() => setViewMode('kanban')}
+              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${viewMode === 'kanban' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Kanban Trạng Thái
+            </button>
+            <button
+              onClick={() => setViewMode('weekly')}
+              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${viewMode === 'weekly' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Kế Hoạch Tuần
+            </button>
+          </div>
+        </div>
+
+        {viewMode === 'kanban' ? (
+          <KanbanBoard
+            tasks={tasks}
+            statuses={STATUSES}
+            onStatusChange={handleStatusChange}
+            onTaskClick={setSelectedTask}
+          />
+        ) : (
+          <WeeklyPlanBoard tasks={tasks} onTaskClick={setSelectedTask} />
+        )}
       </main>
 
       {/* FAB - Create Task */}

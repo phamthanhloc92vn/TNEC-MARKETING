@@ -29,10 +29,10 @@ function assigneeColor(name) {
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 }
 
-// Grouped view for Hoàn thành column (manager-optimized)
-function CompletedColumnGrouped({ tasks, onTaskClick, activeId, isOver }) {
-  const config = STATUS_CONFIG['Hoàn thành'];
-  const { setNodeRef } = useDroppable({ id: 'Hoàn thành' });
+// Grouped view for columns (manager-optimized)
+function GroupedColumn({ status, tasks, onTaskClick, activeId, isOver }) {
+  const config = STATUS_CONFIG[status] || STATUS_CONFIG['Hoàn thành'];
+  const { setNodeRef } = useDroppable({ id: status });
   const [collapsed, setCollapsed] = useState({});
 
   // Group by assignee
@@ -51,7 +51,7 @@ function CompletedColumnGrouped({ tasks, onTaskClick, activeId, isOver }) {
       ref={setNodeRef}
       className={`flex flex-col rounded-2xl border transition-all duration-200 ${
         isOver
-          ? 'border-emerald-300 bg-emerald-50/50 shadow-lg shadow-emerald-100'
+          ? `border-${status === 'Kế hoạch' ? 'indigo' : 'emerald'}-300 bg-${status === 'Kế hoạch' ? 'indigo' : 'emerald'}-50/50 shadow-lg shadow-${status === 'Kế hoạch' ? 'indigo' : 'emerald'}-100`
           : 'border-gray-100 bg-white'
       }`}
     >
@@ -60,20 +60,20 @@ function CompletedColumnGrouped({ tasks, onTaskClick, activeId, isOver }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className={`w-2.5 h-2.5 rounded-full ${config.color}`} />
-            <h3 className="font-semibold text-sm text-gray-800 uppercase tracking-wider">Hoàn thành</h3>
+            <h3 className="font-semibold text-sm text-gray-800 uppercase tracking-wider">{status}</h3>
           </div>
-          <span className="text-xs font-bold text-emerald-600 bg-emerald-50 rounded-full w-6 h-6 flex items-center justify-center">
+          <span className={`text-xs font-bold text-${status === 'Kế hoạch' ? 'indigo' : 'emerald'}-600 bg-${status === 'Kế hoạch' ? 'indigo' : 'emerald'}-50 rounded-full w-6 h-6 flex items-center justify-center`}>
             {tasks.length}
           </span>
         </div>
       </div>
 
       <SortableContext
-        id="Hoàn thành"
+        id={status}
         items={tasks.map(t => t.taskId)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="p-3 min-h-[300px] flex-1 space-y-4" data-status="Hoàn thành">
+        <div className="p-3 min-h-[300px] flex-1 space-y-4" data-status={status}>
           {tasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-gray-300 h-full">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -100,7 +100,7 @@ function CompletedColumnGrouped({ tasks, onTaskClick, activeId, isOver }) {
                       <span className="text-xs font-semibold text-gray-700 truncate">{assignee}</span>
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 rounded-full px-1.5 py-0.5">
+                      <span className={`text-[10px] font-bold text-${status === 'Kế hoạch' ? 'indigo' : 'emerald'}-600 bg-${status === 'Kế hoạch' ? 'indigo' : 'emerald'}-100 rounded-full px-1.5 py-0.5`}>
                         {groupTasks.length}
                       </span>
                       <svg
@@ -256,9 +256,10 @@ export default function KanbanBoard({ tasks, statuses, onStatusChange, onTaskCli
     >
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {statuses.map(status =>
-          status === 'Hoàn thành' ? (
-            <CompletedColumnGrouped
+          (status === 'Hoàn thành' || status === 'Kế hoạch') ? (
+            <GroupedColumn
               key={status}
+              status={status}
               tasks={getTasksByStatus(status)}
               activeId={activeId}
               onTaskClick={onTaskClick}
