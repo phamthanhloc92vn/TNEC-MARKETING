@@ -162,6 +162,13 @@ export async function addUser(userData) {
 }
 
 export async function deleteUser(email) {
+  // Xóa tất cả các task mà user này được assign
+  await supabase
+    .from('tasks')
+    .delete()
+    .eq('assignee', email);
+
+  // Xóa user
   const { error } = await supabase
     .from('users')
     .delete()
