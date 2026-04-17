@@ -44,25 +44,32 @@ const getStartOfWeek = (date) => {
   return d;
 };
 
-const BUCKETS = [
-  { id: 'unscheduled', label: 'Chưa lịch', bg: 'bg-gray-50', text: 'text-gray-600' },
-  { id: 'overdue', label: 'Tồn đọng', bg: 'bg-red-50', text: 'text-red-600' },
-  { id: 't2', label: 'Thứ 2', bg: 'bg-white', text: 'text-indigo-600' },
-  { id: 't3', label: 'Thứ 3', bg: 'bg-white', text: 'text-indigo-600' },
-  { id: 't4', label: 'Thứ 4', bg: 'bg-white', text: 'text-indigo-600' },
-  { id: 't5', label: 'Thứ 5', bg: 'bg-white', text: 'text-indigo-600' },
-  { id: 't6', label: 'Thứ 6', bg: 'bg-white', text: 'text-indigo-600' },
-  { id: 't7', label: 'Thứ 7', bg: 'bg-white', text: 'text-amber-600' },
-  { id: 'cn', label: 'Chủ Nhật', bg: 'bg-white', text: 'text-rose-600' },
-  { id: 'future', label: 'Tương lai', bg: 'bg-indigo-50', text: 'text-indigo-600' },
-];
-
 export default function WeeklyPlanBoard({ tasks, onTaskClick }) {
   const [collapsed, setCollapsed] = useState({});
   const startOfWeek = getStartOfWeek(new Date());
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(startOfWeek.getDate() + 6);
   endOfWeek.setHours(23, 59, 59, 999);
+
+  // Generate dynamic buckets with dates
+  const formatDateForBucket = (baseDate, offsetDays) => {
+    const d = new Date(baseDate);
+    d.setDate(d.getDate() + offsetDays);
+    return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+  };
+
+  const buckets = [
+    { id: 'unscheduled', label: 'Chưa lịch', bg: 'bg-gray-50', text: 'text-gray-600' },
+    { id: 'overdue', label: 'Tồn đọng', bg: 'bg-red-50', text: 'text-red-600' },
+    { id: 't2', label: `Thứ 2 (${formatDateForBucket(startOfWeek, 0)})`, bg: 'bg-white', text: 'text-indigo-600' },
+    { id: 't3', label: `Thứ 3 (${formatDateForBucket(startOfWeek, 1)})`, bg: 'bg-white', text: 'text-indigo-600' },
+    { id: 't4', label: `Thứ 4 (${formatDateForBucket(startOfWeek, 2)})`, bg: 'bg-white', text: 'text-indigo-600' },
+    { id: 't5', label: `Thứ 5 (${formatDateForBucket(startOfWeek, 3)})`, bg: 'bg-white', text: 'text-indigo-600' },
+    { id: 't6', label: `Thứ 6 (${formatDateForBucket(startOfWeek, 4)})`, bg: 'bg-white', text: 'text-indigo-600' },
+    { id: 't7', label: `Thứ 7 (${formatDateForBucket(startOfWeek, 5)})`, bg: 'bg-white', text: 'text-amber-600' },
+    { id: 'cn', label: `Chủ Nhật (${formatDateForBucket(startOfWeek, 6)})`, bg: 'bg-white', text: 'text-rose-600' },
+    { id: 'future', label: 'Tương lai', bg: 'bg-indigo-50', text: 'text-indigo-600' },
+  ];
 
   // Filter out completely finished tasks
   const activeTasks = tasks.filter(t => t.status !== 'Hoàn thành');
@@ -99,7 +106,7 @@ export default function WeeklyPlanBoard({ tasks, onTaskClick }) {
           Nhân sự
         </div>
         <div className="flex flex-1 min-w-[1000px]">
-          {BUCKETS.map(b => (
+          {buckets.map(b => (
             <div key={b.id} className={`flex-1 min-w-[120px] p-3 text-center border-r border-gray-200 last:border-0 ${b.bg}`}>
               <span className={`text-xs font-bold uppercase tracking-wide ${b.text}`}>{b.label}</span>
             </div>
@@ -109,7 +116,7 @@ export default function WeeklyPlanBoard({ tasks, onTaskClick }) {
 
       {/* Body Rows */}
       <div className="divide-y divide-gray-100 max-h-[70vh] overflow-y-auto">
-        {Object.entries(grouped).map(([assignee, buckets]) => {
+        {Object.entries(grouped).map(([assignee, userTaskBuckets]) => {
           const isCollapsed = collapsed[assignee];
           const grad = assigneeColor(assignee);
           
@@ -127,15 +134,15 @@ export default function WeeklyPlanBoard({ tasks, onTaskClick }) {
                   <div className="text-sm font-semibold text-gray-800 truncate" title={assignee}>{assignee}</div>
                   <div className="text-[10px] uppercase font-bold text-gray-400 mt-0.5">
                     {/* Count total active tasks for this user */}
-                    {Object.values(buckets).flat().length} tasks
+                    {Object.values(userTaskBuckets).flat().length} tasks
                   </div>
                 </div>
               </div>
 
               {/* Row Cells */}
               <div className="flex flex-1 min-w-[1000px]">
-                {BUCKETS.map(b => {
-                  const tasksInBucket = buckets[b.id] || [];
+                {buckets.map(b => {
+                  const tasksInBucket = userTaskBuckets[b.id] || [];
                   return (
                     <div key={b.id} className={`flex-1 min-w-[120px] p-2 border-r border-gray-100 last:border-0 flex flex-col gap-2 ${isCollapsed ? 'items-center justify-center' : ''} ${b.bg.replace('50', '50/30')}`}>
                       {isCollapsed ? (
