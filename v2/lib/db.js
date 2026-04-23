@@ -1,4 +1,6 @@
-import { supabase } from './supabase';
+// Dùng server client (Service Role Key) để bypass RLS.
+// Phân quyền được xử lý bởi Next.js API routes.
+import { supabaseServer as supabase } from './supabaseServer';
 
 export async function getUsers() {
   const { data, error } = await supabase.from('users').select('*');
